@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fake News Classifier</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#35424a',
+                        secondary: '#e8491d',
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="flex flex-col min-h-screen bg-gray-100 font-sans">
+    <header class="bg-primary text-white py-6 border-b-4 border-secondary">
+        <div class="container mx-auto px-4">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div id="branding" class="mb-4 md:mb-0">
+                    <h1 class="text-3xl font-bold">
+                        <i class="fas fa-newspaper"></i> 
+                        <span class="text-secondary">Fake News</span> Classifier
+                    </h1>
+                </div>
+                <nav>
+                    <ul class="flex space-x-6">
+                        <li class="current"><a href="{% url 'classify_news' %}" class="text-lg hover:font-bold transition duration-300">Home</a></li>
+                        <li><a href="#" class="text-lg hover:font-bold transition duration-300">About</a></li>
+                        <li><a href="#" class="text-lg hover:font-bold transition duration-300">Contact</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-grow container mx-auto px-4 py-10">
+        <div class="bg-white rounded-lg shadow-md p-6">
+            <h2 class="text-2xl font-bold mb-6">Classify News</h2>
+            <form id="news-form" method="post" class="space-y-4">
+                {% csrf_token %}
+                <textarea 
+                    name="news" 
+                    placeholder="Enter news text here..." 
+                    required 
+                    class="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-secondary"
+                    rows="4"
+                >{{ news_text }}</textarea>
+                <button 
+                    type="submit" 
+                    class="w-full py-2 px-4 bg-primary text-white rounded-md hover:bg-secondary transition duration-300"
+                >
+                    Classify
+                </button>
+            </form>
+            {% if result %}
+                <div id="result" class="mt-6 p-4 bg-secondary text-white text-center rounded-md">
+                    <p class="font-bold">Classification Result: {{ result }}</p>
+                    <p class="text-sm mt-2">Confidence Score: {{ confidence_score|floatformat:2 }}%</p>
+                </div>
+            {% endif %}
+        </div>
+    </main>
+
+    <footer class="bg-primary text-white text-center py-4 mt-8">
+        <p class="text-sm">&copy; Final Year Project | Ujjal Koirala</p>
+    </footer>
+</body>
+</html>
