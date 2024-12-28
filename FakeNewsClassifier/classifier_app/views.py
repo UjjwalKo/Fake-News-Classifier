@@ -5,7 +5,6 @@ import string
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 
-# Load the vectorizer and model
 load_vector = joblib.load(open('embeddings/vect.joblib', 'rb'))
 load_model = joblib.load(open('embeddings/DTC.joblib', 'rb'))
 

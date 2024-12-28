@@ -22,24 +22,56 @@
 <body class="flex flex-col min-h-screen bg-gray-100 font-sans">
     <header class="bg-primary text-white py-6 border-b-4 border-secondary">
         <div class="container mx-auto px-4">
-            <div class="flex flex-col md:flex-row justify-between items-center">
-                <div id="branding" class="mb-4 md:mb-0">
+            <div class="flex justify-between items-center">
+                <div id="branding">
                     <h1 class="text-3xl font-bold">
                         <i class="fas fa-newspaper"></i> 
                         <span class="text-secondary">Fake News</span> Classifier
                     </h1>
                 </div>
-                <nav>
-                    <ul class="flex space-x-6">
-                        <li class="current"><a href="{% url 'classify_news' %}" class="text-lg hover:font-bold transition duration-300">Home</a></li>
-                        <li><a href="#" class="text-lg hover:font-bold transition duration-300">About</a></li>
-                        <li><a href="#" class="text-lg hover:font-bold transition duration-300">Contact</a></li>
-                    </ul>
-                </nav>
+                <div class="relative">
+                    {% if user.is_authenticated %}
+                        <button 
+                            onclick="toggleDropdown()"
+                            class="flex items-center space-x-2 focus:outline-none"
+                            aria-expanded="false"
+                        >
+                            <div class="w-10 h-10 rounded-full overflow-hidden bg-gray-300">
+                                {% if user.profile_picture %}
+                                    <img 
+                                        src="{{ user.profile_picture.url }}" 
+                                        alt="" 
+                                        class="w-full h-full object-cover"
+                                    >
+                                {% else %}
+                                    <div class="w-full h-full flex items-center justify-center bg-gray-600 text-white text-xl">
+                                        {{ user.username|make_list|first|upper }}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </button>
+                        <div 
+                            id="userDropdown" 
+                            class="hidden absolute right-0 top-12 w-48 bg-white rounded-md shadow-lg py-1 text-gray-700"
+                        >
+                            <a 
+                                href="{% url 'profile' %}" 
+                                class="block px-4 py-2 text-sm hover:bg-gray-100"
+                            >
+                                Your Profile
+                            </a>
+                            <a 
+                                href="{% url 'logout' %}" 
+                                class="block px-4 py-2 text-sm hover:bg-gray-100"
+                            >
+                                Logout
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
             </div>
         </div>
     </header>
-
     <main class="flex-grow container mx-auto px-4 py-10">
         <div class="bg-white rounded-lg shadow-md p-6">
             <h2 class="text-2xl font-bold mb-6">Classify News</h2>
@@ -67,9 +99,25 @@
             {% endif %}
         </div>
     </main>
-
     <footer class="bg-primary text-white text-center py-4 mt-8">
         <p class="text-sm">&copy; Final Year Project | Ujjal Koirala</p>
     </footer>
+
+    <script>
+        function toggleDropdown() {
+            const dropdown = document.getElementById('userDropdown');
+            dropdown.classList.toggle('hidden');
+        }
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(event) {
+            const dropdown = document.getElementById('userDropdown');
+            const button = event.target.closest('button');
+            
+            if (!button && !dropdown.classList.contains('hidden')) {
+                dropdown.classList.add('hidden');
+            }
+        });
+    </script>
 </body>
 </html>

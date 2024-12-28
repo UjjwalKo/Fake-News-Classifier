@@ -1,47 +1,156 @@
-{% extends 'base.html' %}
-
-{% block title %}Profile{% endblock title %}
-
-{% block content %}
-<div class="max-w-4xl mx-auto bg-white rounded-xl shadow-md overflow-hidden">
-    <div class="md:flex">
-        <div class="md:flex-shrink-0">
-            {% if user.profile_picture %}
-                <img class="h-48 w-full object-cover md:w-48" src="{{ user.profile_picture.url }}" alt="{{ user.username }}">
-            {% else %}
-                <div class="h-48 w-full md:w-48 bg-gray-300 flex items-center justify-center">
-                    <span class="text-gray-500 text-4xl">{{ user.username|make_list|first|upper }}</span>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile - Fake News Classifier</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#35424a',
+                        secondary: '#e8491d',
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="flex flex-col min-h-screen bg-gray-100 font-sans">
+    <header class="bg-primary text-white py-6 border-b-4 border-secondary">
+        <div class="container mx-auto px-4">
+            <div class="flex flex-col sm:flex-row justify-between items-center">
+                <div id="branding" class="mb-4 sm:mb-0">
+                    <h1 class="text-3xl font-bold">
+                        <i class="fas fa-newspaper"></i> 
+                        <span class="text-secondary">Fake News</span> Classifier
+                    </h1>
                 </div>
-            {% endif %}
-        </div>
-        <div class="p-8 w-full">
-            <div class="uppercase tracking-wide text-sm text-indigo-500 font-semibold">Your Profile</div>
-            <h2 class="mt-2 text-2xl font-bold">{{ user.username }}</h2>
-            <p class="mt-2 text-gray-500">{{ user.email }}</p>
-            <form method="post" enctype="multipart/form-data" class="mt-4 space-y-4">
-                {% csrf_token %}
-                {% for field in form %}
-                    <div>
-                        <label for="{{ field.id_for_label }}" class="block text-sm font-medium text-gray-700">
-                            {{ field.label }}
-                        </label>
-                        <div class="mt-1">
-                            {{ field }}
+                <nav class="flex items-center space-x-4">
+                    <a href="{% url 'classify_news' %}" class="text-white hover:text-secondary transition duration-300" style="font-size: 1.4rem; margin: 0 30px;">Home</a>
+                    {% if user.is_authenticated %}
+                        <div class="relative">
+                            <button 
+                                onclick="toggleDropdown()"
+                                class="flex items-center space-x-2 focus:outline-none"
+                                aria-expanded="false"
+                            >
+                                <div class="w-10 h-10 rounded-full overflow-hidden bg-gray-300">
+                                    {% if user.profile_picture %}
+                                        <img 
+                                            src="{{ user.profile_picture.url }}" 
+                                            alt="" 
+                                            class="w-full h-full object-cover"
+                                        >
+                                    {% else %}
+                                        <div class="w-full h-full flex items-center justify-center bg-gray-600 text-white text-xl">
+                                            {{ user.username|make_list|first|upper }}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </button>
+                            <div 
+                                id="userDropdown" 
+                                class="hidden absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 text-gray-700"
+                            >
+                                <a 
+                                    href="{% url 'profile' %}" 
+                                    class="block px-4 py-2 text-sm hover:bg-gray-100"
+                                >
+                                    Your Profile
+                                </a>
+                                <a 
+                                    href="{% url 'logout' %}" 
+                                    class="block px-4 py-2 text-sm hover:bg-gray-100"
+                                >
+                                    Logout
+                                </a>
+                            </div>
                         </div>
-                        {% if field.errors %}
-                            {% for error in field.errors %}
-                                <p class="text-red-500 text-xs italic">{{ error }}</p>
-                            {% endfor %}
-                        {% endif %}
+                    {% else %}
+                        <a href="{% url 'login' %}" class="text-white hover:text-secondary transition duration-300">Login</a>
+                        <a href="{% url 'register' %}" class="text-white hover:text-secondary transition duration-300">Register</a>
+                    {% endif %}
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-grow container mx-auto px-4 py-10">
+        {% if messages %}
+            <div class="mb-4">
+                {% for message in messages %}
+                    <div class="bg-{% if message.tags == 'error' %}red{% else %}green{% endif %}-100 border border-{% if message.tags == 'error' %}red{% else %}green{% endif %}-400 text-{% if message.tags == 'error' %}red{% else %}green{% endif %}-700 px-4 py-3 rounded relative" role="alert">
+                        <span class="block sm:inline">{{ message }}</span>
                     </div>
                 {% endfor %}
-                <div>
-                    <button type="submit" class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                        Update Profile
-                    </button>
+            </div>
+        {% endif %}
+        <div class="max-w-4xl mx-auto bg-white rounded-xl shadow-md overflow-hidden">
+            <div class="md:flex">
+                <div class="md:flex-shrink-0">
+                    {% if user.profile_picture %}
+                        <img class="h-48 w-full object-cover md:w-48" src="{{ user.profile_picture.url }}" alt="{{ user.username }}">
+                    {% else %}
+                        <div class="h-48 w-full md:w-48 bg-gray-300 flex items-center justify-center">
+                            <span class="text-gray-500 text-4xl">{{ user.username|make_list|first|upper }}</span>
+                        </div>
+                    {% endif %}
                 </div>
-            </form>
+                <div class="p-8 w-full">
+                    <div class="uppercase tracking-wide text-sm text-indigo-500 font-semibold">Your Profile</div>
+                    <h2 class="mt-2 text-2xl font-bold">{{ user.username }}</h2>
+                    <p class="mt-2 text-gray-500">{{ user.email }}</p>
+                    <form method="post" enctype="multipart/form-data" class="mt-4 space-y-4">
+                        {% csrf_token %}
+                        {% for field in form %}
+                            <div>
+                                <label for="{{ field.id_for_label }}" class="block text-sm font-medium text-gray-700">
+                                    {{ field.label }}
+                                </label>
+                                <div class="mt-1">
+                                    {{ field }}
+                                </div>
+                                {% if field.errors %}
+                                    {% for error in field.errors %}
+                                        <p class="text-red-500 text-xs italic">{{ error }}</p>
+                                    {% endfor %}
+                                {% endif %}
+                            </div>
+                        {% endfor %}
+                        <div>
+                            <button type="submit" class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                                Update Profile
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
         </div>
-    </div>
-</div>
-{% endblock content %}
+    </main>
+
+    <footer class="bg-primary text-white text-center py-4 mt-8">
+        <p class="text-sm">&copy; Final Year Project | Ujjal Koirala</p>
+    </footer>
+
+    <script>
+        function toggleDropdown() {
+            const dropdown = document.getElementById('userDropdown');
+            dropdown.classList.toggle('hidden');
+        }
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(event) {
+            const dropdown = document.getElementById('userDropdown');
+            const button = event.target.closest('button');
+            
+            if (!button && !dropdown.classList.contains('hidden')) {
+                dropdown.classList.add('hidden');
+            }
+        });
+    </script>
+</body>
+</html>
