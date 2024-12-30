@@ -11,7 +11,7 @@ def register_view(request):
             user = form.save()
             login(request, user)
             messages.success(request, 'Registration successful.')
-            return redirect('classify_news')  # Redirect to classifier app
+            return redirect('classify_news')
     else:
         form = CustomUserCreationForm()
     return render(request, 'accounts/register.html', {'form': form})
@@ -24,13 +24,17 @@ def login_view(request):
         if user is not None:
             login(request, user)
             messages.success(request, 'You have been logged in.')
-            return redirect('classify_news')  # Redirect to classifier app
+            return redirect('classify_news')
         else:
             messages.error(request, 'Invalid username or password.')
     return render(request, 'accounts/login.html')
 
 @login_required
 def profile_view(request):
+    return render(request, 'accounts/profile.html')
+
+@login_required
+def edit_profile_view(request):
     if request.method == 'POST':
         form = CustomUserChangeForm(request.POST, request.FILES, instance=request.user)
         if form.is_valid():
@@ -39,7 +43,7 @@ def profile_view(request):
             return redirect('profile')
     else:
         form = CustomUserChangeForm(instance=request.user)
-    return render(request, 'accounts/profile.html', {'form': form})
+    return render(request, 'accounts/edit.html', {'form': form})
 
 @login_required
 def logout_view(request):
