@@ -20,58 +20,70 @@
     </script>
 </head>
 <body class="flex flex-col min-h-screen bg-gray-100 font-sans">
+    <!-- Header -->
     <header class="bg-primary text-white py-6 border-b-4 border-secondary">
         <div class="container mx-auto px-4">
             <div class="flex justify-between items-center">
+                <!-- Branding -->
                 <div id="branding">
                     <h1 class="text-3xl font-bold">
                         <i class="fas fa-newspaper"></i> 
                         <span class="text-secondary">Fake News</span> Classifier
                     </h1>
                 </div>
-                <div class="relative">
+                <!-- Navigation -->
+                <nav class="flex items-center space-x-6">
+                    <a href="{% url 'classify_news' %}" 
+                       class="text-white hover:text-secondary transition duration-300 text-lg md:text-xl px-2">
+                        Home
+                    </a>
+                    <!-- Profile Dropdown -->
                     {% if user.is_authenticated %}
-                        <button 
-                            onclick="toggleDropdown()"
-                            class="flex items-center space-x-2 focus:outline-none"
-                            aria-expanded="false"
-                        >
-                            <div class="w-10 h-10 rounded-full overflow-hidden bg-gray-300">
-                                {% if user.profile_picture %}
-                                    <img 
-                                        src="{{ user.profile_picture.url }}" 
-                                        alt="" 
-                                        class="w-full h-full object-cover"
-                                    >
-                                {% else %}
-                                    <div class="w-full h-full flex items-center justify-center bg-gray-600 text-white text-xl">
-                                        {{ user.username|make_list|first|upper }}
-                                    </div>
-                                {% endif %}
+                        <div class="relative">
+                            <button 
+                                onclick="toggleDropdown()"
+                                class="flex items-center space-x-2 focus:outline-none"
+                                aria-expanded="false"
+                            >
+                                <div class="w-10 h-10 rounded-full overflow-hidden bg-gray-300">
+                                    {% if user.profile_picture %}
+                                        <img 
+                                            src="{{ user.profile_picture.url }}" 
+                                            alt="" 
+                                            class="w-full h-full object-cover"
+                                        >
+                                    {% else %}
+                                        <div class="w-full h-full flex items-center justify-center bg-gray-600 text-white text-xl">
+                                            {{ user.username|make_list|first|upper }}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </button>
+                            <div 
+                                id="userDropdown" 
+                                class="hidden absolute right-0 top-12 w-48 bg-white rounded-md shadow-lg py-1 text-gray-700 z-50"
+                            >
+                                <a 
+                                    href="{% url 'profile' %}" 
+                                    class="block px-4 py-2 text-sm hover:bg-gray-100"
+                                >
+                                    Your Profile
+                                </a>
+                                <a 
+                                    href="{% url 'logout' %}" 
+                                    class="block px-4 py-2 text-sm hover:bg-gray-100"
+                                >
+                                    Logout
+                                </a>
                             </div>
-                        </button>
-                        <div 
-                            id="userDropdown" 
-                            class="hidden absolute right-0 top-12 w-48 bg-white rounded-md shadow-lg py-1 text-gray-700"
-                        >
-                            <a 
-                                href="{% url 'profile' %}" 
-                                class="block px-4 py-2 text-sm hover:bg-gray-100"
-                            >
-                                Your Profile
-                            </a>
-                            <a 
-                                href="{% url 'logout' %}" 
-                                class="block px-4 py-2 text-sm hover:bg-gray-100"
-                            >
-                                Logout
-                            </a>
                         </div>
                     {% endif %}
-                </div>
+                </nav>
             </div>
         </div>
     </header>
+
+    <!-- Main Content -->
     <main class="flex-grow container mx-auto px-4 py-10">
         <div class="bg-white rounded-lg shadow-md p-6">
             <h2 class="text-2xl font-bold mb-6">Classify News</h2>
@@ -99,10 +111,13 @@
             {% endif %}
         </div>
     </main>
+
+    <!-- Footer -->
     <footer class="bg-primary text-white text-center py-4 mt-8">
         <p class="text-sm">&copy; Final Year Project | Ujjal Koirala</p>
     </footer>
 
+    <!-- JavaScript -->
     <script>
         function toggleDropdown() {
             const dropdown = document.getElementById('userDropdown');
@@ -118,27 +133,6 @@
                 dropdown.classList.add('hidden');
             }
         });
-
-        // Add this new script for the pop-up message
-        document.addEventListener('DOMContentLoaded', function() {
-            const messagePopup = document.getElementById('message-popup');
-            if (messagePopup.textContent.trim() !== '') {
-                messagePopup.classList.remove('opacity-0', 'invisible');
-                setTimeout(() => {
-                    messagePopup.classList.add('opacity-0');
-                    setTimeout(() => {
-                        messagePopup.classList.add('invisible');
-                    }, 300);
-                }, 4000);
-            }
-        });
     </script>
-    <div id="message-popup" class="fixed top-0 left-1/2 transform -translate-x-1/2 mt-4 px-6 py-3 rounded-full bg-green-500 text-white text-sm font-bold shadow-lg transition-opacity duration-300 opacity-0 invisible">
-        {% if messages %}
-            {% for message in messages %}
-                {{ message }}
-            {% endfor %}
-        {% endif %}
-    </div>
 </body>
 </html>
