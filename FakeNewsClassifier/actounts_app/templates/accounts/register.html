@@ -110,5 +110,30 @@
             });
         });
     </script>
+    <div id="message-popup" class="fixed top-0 left-1/2 transform -translate-x-1/2 mt-4 px-6 py-3 rounded-full bg-green-500 text-white text-sm font-bold shadow-lg transition-opacity duration-300 opacity-0 invisible">
+        {% if messages %}
+            {% for message in messages %}
+                {{ message }}
+            {% endfor %}
+        {% endif %}
+    </div>
+
+    <script>
+        // ... (keep existing script content)
+
+        // Add this new script for the pop-up message
+        document.addEventListener('DOMContentLoaded', function() {
+            const messagePopup = document.getElementById('message-popup');
+            if (messagePopup.textContent.trim() !== '') {
+                messagePopup.classList.remove('opacity-0', 'invisible');
+                setTimeout(() => {
+                    messagePopup.classList.add('opacity-0');
+                    setTimeout(() => {
+                        messagePopup.classList.add('invisible');
+                    }, 300);
+                }, 4000);
+            }
+        });
+    </script>
 </body>
 </html>
