@@ -9,3 +9,12 @@ class CustomUser(AbstractUser):
 
     def __str__(self):
         return self.username
+
+class Feedback(models.Model):
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    content = models.TextField()
+    rating = models.IntegerField(choices=[(1, '1'), (2, '2'), (3, '3'), (4, '4'), (5, '5')])
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Feedback from {self.user.username} - Rating: {self.rating}"

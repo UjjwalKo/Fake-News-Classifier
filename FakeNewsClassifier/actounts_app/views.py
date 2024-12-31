@@ -3,6 +3,7 @@ from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from .forms import CustomUserCreationForm, CustomUserChangeForm
+from .models import Feedback
 
 def register_view(request):
     if request.method == 'POST':
@@ -50,3 +51,16 @@ def logout_view(request):
     logout(request)
     messages.success(request, 'You have been logged out.')
     return redirect('login')
+
+@login_required
+def feedback_view(request):
+    if request.method == 'POST':
+        content = request.POST.get('feedback')
+        rating = request.POST.get('rating')
+        if content and rating:
+            Feedback.objects.create(user=request.user, content=content, rating=rating)
+            messages.success(request, 'Thank you for your feedback!')
+            return redirect('classify_news')
+        else:
+            messages.error(request, 'Please provide both a rating and feedback.')
+    return render(request, 'accounts/feedback.html')
