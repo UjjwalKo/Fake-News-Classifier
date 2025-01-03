@@ -14,6 +14,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'classifier_app',
     'actounts_app',
+    'news_app',
 ]
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
