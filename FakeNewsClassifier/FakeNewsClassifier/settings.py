@@ -48,8 +48,12 @@ MESSAGE_TAGS = {
 }
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'fake_news_classifier_db',
+        'USER': 'ujjal',
+        'PASSWORD': 'ujjal123',
+        'HOST': 'localhost',
+        'PORT': '5432',
     }
 }
 AUTH_PASSWORD_VALIDATORS = [
@@ -74,3 +78,4 @@ STATIC_URL = 'static/'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+NEWS_API_KEY = '658d11dc84764ff1b23f9a28bd7a3ae5'

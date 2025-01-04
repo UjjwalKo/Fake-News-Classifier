@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fake News Classifier</title>
+    <title>{% block title %}News App{% endblock %}</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -20,28 +20,32 @@
     </script>
 </head>
 <body class="flex flex-col min-h-screen bg-gray-100 font-sans">
-    <!-- Header -->
     <header class="bg-primary text-white py-6 border-b-4 border-secondary">
         <div class="container mx-auto px-4">
-            <div class="flex justify-between items-center">
-                <!-- Branding -->
-                <div id="branding">
+            <div class="flex flex-col sm:flex-row justify-between items-center">
+                <div id="branding" class="mb-4 sm:mb-0">
                     <h1 class="text-3xl font-bold">
                         <i class="fas fa-newspaper"></i> 
                         <span class="text-secondary">Fake News</span> Classifier
                     </h1>
                 </div>
-                <!-- Navigation -->
                 <nav class="flex items-center space-x-6">
                     <a href="{% url 'classify_news' %}" 
                        class="text-white hover:text-secondary transition duration-300 text-lg md:text-xl px-2">
                         Home
                     </a>
-                    <a href="{% url 'feedback' %}" 
-                    class="text-white hover:text-secondary transition duration-300 text-lg md:text-xl px-2">
-                     Feedback
+                    <a href="{% url 'news_home' %}" 
+                       class="text-white hover:text-secondary transition duration-300 text-lg md:text-xl px-2">
+                        News
                     </a>
-                    <!-- Profile Dropdown -->
+                    <a href="{% url 'live_news' %}" 
+                       class="text-white hover:text-secondary transition duration-300 text-lg md:text-xl px-2">
+                        Live News
+                    </a>
+                    <a href="{% url 'feedback' %}" 
+                       class="text-white hover:text-secondary transition duration-300 text-lg md:text-xl px-2">
+                        Feedback
+                    </a>
                     {% if user.is_authenticated %}
                         <div class="relative">
                             <button 
@@ -81,26 +85,37 @@
                                 </a>
                             </div>
                         </div>
+                    {% else %}
+                        <a href="{% url 'login' %}" class="text-white hover:text-secondary transition duration-300">Login</a>
+                        <a href="{% url 'register' %}" class="text-white hover:text-secondary transition duration-300">Register</a>
                     {% endif %}
                 </nav>
             </div>
         </div>
     </header>
 
+    <main class="flex-grow container mx-auto px-4 py-8">
+        {% block content %}{% endblock %}
+    </main>
 
-     <!-- Footer -->
-     <footer class="bg-primary text-white text-center py-4 mt-8">
+    <footer class="bg-primary text-white text-center py-4">
         <p class="text-sm">&copy; Final Year Project | Ujjal Koirala</p>
     </footer>
 
-    <!-- JavaScript -->
+    <div id="message-popup" class="fixed top-0 left-1/2 transform -translate-x-1/2 mt-4 px-6 py-3 rounded-full bg-green-500 text-white text-sm font-bold shadow-lg transition-opacity duration-300 opacity-0 invisible">
+        {% if messages %}
+            {% for message in messages %}
+                {{ message }}
+            {% endfor %}
+        {% endif %}
+    </div>
+
     <script>
         function toggleDropdown() {
             const dropdown = document.getElementById('userDropdown');
             dropdown.classList.toggle('hidden');
         }
 
-        // Close dropdown when clicking outside
         document.addEventListener('click', function(event) {
             const dropdown = document.getElementById('userDropdown');
             const button = event.target.closest('button');
@@ -109,6 +124,20 @@
                 dropdown.classList.add('hidden');
             }
         });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const messagePopup = document.getElementById('message-popup');
+            if (messagePopup.textContent.trim() !== '') {
+                messagePopup.classList.remove('opacity-0', 'invisible');
+                setTimeout(() => {
+                    messagePopup.classList.add('opacity-0');
+                    setTimeout(() => {
+                        messagePopup.classList.add('invisible');
+                    }, 300);
+                }, 4000);
+            }
+        });
     </script>
+    {% block extra_js %}{% endblock %}
 </body>
 </html>
