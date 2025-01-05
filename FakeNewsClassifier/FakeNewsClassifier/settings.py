@@ -50,8 +50,8 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'fake_news_classifier_db',
-        'USER': 'ujjal',
-        'PASSWORD': 'ujjal123',
+        'USER': 'postgres',
+        'PASSWORD': '200210',
         'HOST': 'localhost',
         'PORT': '5432',
     }

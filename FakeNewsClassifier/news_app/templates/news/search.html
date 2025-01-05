@@ -4,8 +4,34 @@
 
 {% block content %}
 <div class="container mx-auto px-4 py-8">
-    <h1 class="text-3xl font-bold mb-8">Search Results for "{{ query }}"</h1>
+    <h1 class="text-3xl font-bold mb-4">Latest News</h1>
     
+    <!-- Category Navigation -->
+    <div class="flex flex-wrap -mx-2 mb-8">
+        <a href="{% url 'news_home' %}" class="m-2 px-6 py-2 bg-blue-500 text-white rounded-full hover:bg-blue-600 transition-colors">
+            Business
+        </a>
+        <a href="{% url 'news_category' 'entertainment' %}" class="m-2 px-6 py-2 bg-pink-500 text-white rounded-full hover:bg-pink-600 transition-colors">
+            Entertainment
+        </a>
+        <a href="{% url 'news_category' 'health' %}" class="m-2 px-6 py-2 bg-green-500 text-white rounded-full hover:bg-green-600 transition-colors">
+            Health
+        </a>
+        <a href="{% url 'news_category' 'science' %}" class="m-2 px-6 py-2 bg-purple-500 text-white rounded-full hover:bg-purple-600 transition-colors">
+            Science
+        </a>
+        <a href="{% url 'news_category' 'sports' %}" class="m-2 px-6 py-2 bg-red-500 text-white rounded-full hover:bg-red-600 transition-colors">
+            Sports
+        </a>
+        <a href="{% url 'news_category' 'technology' %}" class="m-2 px-6 py-2 bg-gray-500 text-white rounded-full hover:bg-gray-600 transition-colors">
+            Technology
+        </a>
+    </div>
+
+    <!-- Search Results Header -->
+    <h2 class="text-2xl font-semibold mb-6">Search Results for "{{ query }}"</h2>
+    
+    <!-- Search Bar -->
     <div class="mb-8">
         <form action="{% url 'news_search' %}" method="get" class="flex">
             <input type="text" name="q" placeholder="Search news..." value="{{ query }}" class="flex-grow px-4 py-2 border border-gray-300 rounded-l-md focus:outline-none focus:ring-2 focus:ring-blue-500">
@@ -15,6 +41,7 @@
         </form>
     </div>
 
+    <!-- Search Results Grid -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {% for article in page_obj %}
             <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300">
@@ -39,6 +66,7 @@
         {% endfor %}
     </div>
 
+    <!-- Pagination -->
     <div class="mt-8 flex justify-center">
         <nav class="inline-flex rounded-md shadow">
             {% if page_obj.has_previous %}
